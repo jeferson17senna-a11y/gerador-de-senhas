@@ -127,21 +127,88 @@ def senha_personalizada():
     senha = ''.join(senha)
     return senha
 
+def verificar_forca_senha(senha):
+
+    tem_minusculas = False
+    tem_maiusculas = False
+    tem_numeros = False
+    tem_simbolos = False
+
+    for caractere in senha:
+        if caractere.islower():
+            tem_minusculas = True
+        if caractere.isupper():
+            tem_maiusculas = True
+        if caractere.isdigit():
+            tem_numeros = True
+        if not caractere.isalnum():
+            tem_simbolos = True
+
+    pontuacao = 0
+
+    if tem_minusculas:
+        pontuacao += 1
+    if tem_maiusculas:
+        pontuacao += 1
+    if tem_numeros:
+        pontuacao += 1
+    if tem_simbolos:
+        pontuacao += 1
+    if len(senha) >= 8:
+        pontuacao += 1
+
+    faltando = []
+
+    if not tem_minusculas:
+        faltando.append("letras minúsculas")
+    if not tem_maiusculas:
+        faltando.append("letras maiúsculas")
+    if not tem_numeros:
+        faltando.append("números")
+    if not tem_simbolos:
+        faltando.append("símbolos")
+    if len(senha) < 8:
+        faltando.append("mínimo de 8 caracteres")
+    if not faltando:
+        faltando = "nenhum requisito faltando"
+    else:
+        faltando = ", ".join(faltando)
+
+    if pontuacao <= 2:
+        return f"Senha fraca, pontuacao: {pontuacao}, faltando: {faltando}"
+    elif pontuacao <= 4:
+        return f"Senha média, pontuacao: {pontuacao}, faltando: {faltando}"
+    else:
+        return f"Senha forte, pontuacao: {pontuacao}, faltando: {faltando}"
+
+
 while True:
     print("Gerador de Senhas")
     print("1 - Gerar senha aleatória")
     print("2 - Gerar senha personalizada")
-    print("3 - Sair")
+    print("3 - Verificar força da senha")
+    print("4 - Sair")
     escolha = input("Escolha uma opção: ")
 
     if escolha == "1":
-        senha_gerada = gerar_senha()
-        print(f"Senha gerada: {senha_gerada}")
+        senha = gerar_senha()
+        forca_senha = verificar_forca_senha(senha)
+        print(f"Senha gerada: {senha}")
+        print(f"Força da senha: {forca_senha}")
+
     elif escolha == "2":
-        senha_personalizada_gerada = senha_personalizada()
-        if senha_personalizada_gerada:
-            print(f"Senha personalizada gerada: {senha_personalizada_gerada}")
+        senha_personalizada1 = senha_personalizada()
+        if senha_personalizada1:
+            forca_senha = verificar_forca_senha(senha_personalizada1)
+            print(f"Senha personalizada gerada: {senha_personalizada1}")
+            print(f"Força da senha personalizada: {forca_senha}")
+
     elif escolha == "3":
+        senha_para_verificar = input("Digite a senha para verificar sua força: ")
+        forca_senha = verificar_forca_senha(senha_para_verificar)
+        print(f"Força da senha: {forca_senha}")
+
+    elif escolha == "4":
         print("Saindo...")
         break
     else:
