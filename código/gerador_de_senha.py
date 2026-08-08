@@ -1,5 +1,6 @@
 #importar bibliotecas
 import secrets
+import json
 
 
 def gerar_senha():
@@ -126,6 +127,7 @@ def senha_personalizada():
     secrets.SystemRandom().shuffle(senha)
     senha = ''.join(senha)
     return senha
+
 
 def verificar_forca_senha(senha):
 
