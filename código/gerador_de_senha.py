@@ -183,6 +183,7 @@ def verificar_forca_senha(senha):
     else:
         return f"Senha forte, pontuacao: {pontuacao}, faltando: {faltando}"
 
+def salvar_senha(site, usuario, senha):
 
 while True:
     print("Gerador de Senhas")
