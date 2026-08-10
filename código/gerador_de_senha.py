@@ -184,6 +184,21 @@ def verificar_forca_senha(senha):
         return f"Senha forte, pontuacao: {pontuacao}, faltando: {faltando}"
 
 def salvar_senha(site, usuario, senha):
+    #verifica se o arquivo senhas.json existe, se não existir cria um novo arquivo
+    try:
+        with open("senhas.json", "r") as arquivo:
+            #carrega os dados do arquivo senhas.json
+            dados = json.load(arquivo)
+    except FileNotFoundError:
+        dados = []
+    #adiciona a nova senha ao arquivo senhas.json
+    dados.append({"site": site, 
+                  "usuario": usuario, 
+                  "senha": senha})
+    #salva os dados no arquivo senhas.json
+    with open("senhas.json", "w") as arquivo:
+        json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+   
 
 while True:
     print("Gerador de Senhas")
@@ -194,17 +209,33 @@ while True:
     escolha = input("Escolha uma opção: ")
 
     if escolha == "1":
+        #gerar senha aleatória
         senha = gerar_senha()
+        #verificar força da senha
         forca_senha = verificar_forca_senha(senha)
+        #salvar senha no arquivo senhas.json
+        site = input("Digite o nome do site: ")
+        usuario = input("Digite o nome do usuário: ")
+        salvar_senha(site, usuario, senha)
+        #exibir a senha gerada e sua força
         print(f"Senha gerada: {senha}")
         print(f"Força da senha: {forca_senha}")
+        print("Senha salva com sucesso")
 
     elif escolha == "2":
+        #gerar senha personalizada
         senha_personalizada1 = senha_personalizada()
+        #verificar força da senha personalizada
         if senha_personalizada1:
             forca_senha = verificar_forca_senha(senha_personalizada1)
+            #salvar senha personalizada no arquivo senhas.json
+            site = input("Digite o nome do site: ")
+            usuario = input("Digite o nome do usuário: ")
+            salvar_senha(site, usuario, senha_personalizada1)
+            #exibir a senha personalizada gerada e sua força
             print(f"Senha personalizada gerada: {senha_personalizada1}")
             print(f"Força da senha personalizada: {forca_senha}")
+            print("Senha salva com sucesso ")
 
     elif escolha == "3":
         senha_para_verificar = input("Digite a senha para verificar sua força: ")
