@@ -220,6 +220,42 @@ def consultar_senhas():
         print(f"senha: {senha['senha']}")
         
 
+def excluir_senha():
+    try:
+        with open("senhas.json", "r") as arquivo:
+            dados = json.load(arquivo)
+    except FileNotFoundError:
+        print("nenhuma senha salva.")
+        return
+
+    if not dados:
+        print("não existem dados no arquivo")
+        return
+
+    for numero, senha in enumerate(dados, start=1):
+        print(f"--- senha{numero} ---")
+        print(f"site: {senha['site']}")
+        print(f"usuário: {senha['usuario']}")
+        print(f"senha: {senha['senha']}") 
+
+    try:
+        numero_excluir = int(input("qual senha quer excluir?: "))
+    except ValueError:
+        print("digite apenas numeros.")
+        return
+
+    if numero_excluir < 1 or numero_excluir > len(dados):
+        print("número de senha invalido.")
+        return
+
+    dados.pop(numero_excluir - 1)
+
+    with open("senhas.json", "w") as arquivo:
+        json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+
+    print("senha excluida com sucesso!")
+        
+
 while True:
     print("Gerador de Senhas")
     print("1 - Gerar senha aleatória")
@@ -227,7 +263,8 @@ while True:
     print("3 - Verificar força da senha")
     print("4 - consultar senhas salvas")
     print("5 - guardar senhas já criadas")
-    print("6 - sair")
+    print("6 - excluir senha existente")
+    print("7 - sair")
     escolha = input("Escolha uma opção: ")
 
     if escolha == "1":
@@ -275,7 +312,11 @@ while True:
         print("senha salva com sucesso")
 
     elif escolha == "6":
+        excluir_senha()
+
+    elif escolha == "7":
         print("Saindo...")
         break
+
     else:
         print("Opção inválida. Tente novamente.")
