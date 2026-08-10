@@ -254,7 +254,11 @@ def excluir_senha():
         json.dump(dados, arquivo, indent=4, ensure_ascii=False)
 
     print("senha excluida com sucesso!")
-        
+
+
+#função que permite editar senha já existente
+#def editar_senha():
+           
 
 while True:
     print("Gerador de Senhas")
