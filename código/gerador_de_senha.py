@@ -182,6 +182,7 @@ def verificar_forca_senha(senha):
         return f"Senha média, pontuacao: {pontuacao}, faltando: {faltando}"
     else:
         return f"Senha forte, pontuacao: {pontuacao}, faltando: {faltando}"
+    
 
 def salvar_senha(site, usuario, senha):
     #verifica se o arquivo senhas.json existe, se não existir cria um novo arquivo
@@ -198,14 +199,35 @@ def salvar_senha(site, usuario, senha):
     #salva os dados no arquivo senhas.json
     with open("senhas.json", "w") as arquivo:
         json.dump(dados, arquivo, indent=4, ensure_ascii=False)
-   
+
+
+def consultar_senhas():
+    try:
+        with open("senhas.json", "r") as arquivo:
+            dados = json.load(arquivo)
+    except FileNotFoundError:
+        print("Nenhuma senha salva.")
+        return
+
+    if not dados:
+        print("Nenhuma senha salva.")
+        return
+
+    for numero, senha in enumerate(dados, start=1):
+        print(f"--- senha{numero} ---")
+        print(f"site: {senha['site']}")
+        print(f"usuário: {senha['usuario']}")
+        print(f"senha: {senha['senha']}")
+        
 
 while True:
     print("Gerador de Senhas")
     print("1 - Gerar senha aleatória")
     print("2 - Gerar senha personalizada")
     print("3 - Verificar força da senha")
-    print("4 - Sair")
+    print("4 - consultar senhas salvas")
+    print("5 - guardar senhas já criadas")
+    print("6 - sair")
     escolha = input("Escolha uma opção: ")
 
     if escolha == "1":
@@ -243,6 +265,16 @@ while True:
         print(f"Força da senha: {forca_senha}")
 
     elif escolha == "4":
+        consultar_senhas()
+
+    elif escolha == "5":
+        site = input("digite o site: ")
+        usuario = input("digite o usuário/email: ")
+        senha = input("digite a senha: ")
+        salvar_senha(site, usuario, senha)
+        print("senha salva com sucesso")
+
+    elif escolha == "6":
         print("Saindo...")
         break
     else:
