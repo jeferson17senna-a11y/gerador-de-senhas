@@ -2,6 +2,18 @@
 import secrets
 import json
 
+def menu():
+    print('''
+--- Gerador de Senhas ---
+1 - Gerar senha aleatória
+2 - Gerar senha personalizada
+3 - Verificar força da senha
+4 - consultar senhas salvas
+5 - guardar senhas já criadas
+6 - excluir senha existente
+7 - alterar senha/usuario/site
+8 - sair''')
+
 
 def gerar_senha():
 
@@ -256,71 +268,128 @@ def excluir_senha():
     print("senha excluida com sucesso!")
 
 
-#função que permite editar senha já existente
-#def editar_senha():
-           
+def editar_senha():
+    try:
+        with open("senhas.json", "r") as arquivo:
+            dados = json.load(arquivo)
+    except FileNotFoundError:
+        print("nenhuma senha salva.")
+        return
 
-while True:
-    print("Gerador de Senhas")
-    print("1 - Gerar senha aleatória")
-    print("2 - Gerar senha personalizada")
-    print("3 - Verificar força da senha")
-    print("4 - consultar senhas salvas")
-    print("5 - guardar senhas já criadas")
-    print("6 - excluir senha existente")
-    print("7 - sair")
-    escolha = input("Escolha uma opção: ")
+    if not dados:
+        print("não existem dados no arquivo.")
+        return
 
-    if escolha == "1":
-        #gerar senha aleatória
-        senha = gerar_senha()
-        #verificar força da senha
-        forca_senha = verificar_forca_senha(senha)
-        #salvar senha no arquivo senhas.json
-        site = input("Digite o nome do site: ")
-        usuario = input("Digite o nome do usuário: ")
-        salvar_senha(site, usuario, senha)
-        #exibir a senha gerada e sua força
-        print(f"Senha gerada: {senha}")
-        print(f"Força da senha: {forca_senha}")
-        print("Senha salva com sucesso")
+    for numero, senha in enumerate(dados, start=1):
+        print(f"--- senha{numero} ---")
+        print(f"site: {senha['site']}")
+        print(f"usuário: {senha['usuario']}")
+        print(f"senha: {senha['senha']}")
 
-    elif escolha == "2":
-        #gerar senha personalizada
-        senha_personalizada1 = senha_personalizada()
-        #verificar força da senha personalizada
-        if senha_personalizada1:
-            forca_senha = verificar_forca_senha(senha_personalizada1)
-            #salvar senha personalizada no arquivo senhas.json
+    print("digite o número da senha para editar")
+    try:
+        senha_editar = int(input("nº da senha: "))
+    except ValueError:
+        print("Digite um valor válido.")
+        return
+
+    if senha_editar < 1 or senha_editar > len(dados):
+        print("número de senha inválido.")
+        return
+
+    senha_selecionada = dados[senha_editar - 1]
+
+    print("-- [1]site [2]usuário [3]senha --")
+    pergunta_usuario = input("o que você que alterar? : ")
+
+    if pergunta_usuario == "1":
+        site = input("novo site: ")
+        senha_selecionada["site"] = site
+        print("site alterado com sucesso!")
+
+    elif pergunta_usuario == "2":
+        usuario = input("novo usuário: ")
+        senha_selecionada["usuario"] = usuario
+        print("usuário alterada com sucesso!")
+
+    elif pergunta_usuario == "3":
+        senha = input("nova senha: ")
+        if len(senha) < 8 or len(senha) > 64:
+            print("a senha deve ter entre 8 e 64 caracteres.")
+            return
+
+        else:
+            senha_selecionada["senha"] = senha
+            print("senha alterada com sucesso!")
+
+    with open("senhas.json", "w") as arquivo:
+        json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+
+    print("arquivo salvo com sucesso!")
+        
+
+def menu_interativo():
+    while True:
+        menu()
+
+        escolha = input("escolha uma opção: ")
+
+        if escolha == "1":
+            #gerar senha aleatória
+            senha = gerar_senha()
+            #verificar força da senha
+            forca_senha = verificar_forca_senha(senha)
+            #salvar senha no arquivo senhas.json
             site = input("Digite o nome do site: ")
             usuario = input("Digite o nome do usuário: ")
-            salvar_senha(site, usuario, senha_personalizada1)
-            #exibir a senha personalizada gerada e sua força
-            print(f"Senha personalizada gerada: {senha_personalizada1}")
-            print(f"Força da senha personalizada: {forca_senha}")
-            print("Senha salva com sucesso ")
+            salvar_senha(site, usuario, senha)
+            #exibir a senha gerada e sua força
+            print(f"Senha gerada: {senha}")
+            print(f"Força da senha: {forca_senha}")
+            print("Senha salva com sucesso")
 
-    elif escolha == "3":
-        senha_para_verificar = input("Digite a senha para verificar sua força: ")
-        forca_senha = verificar_forca_senha(senha_para_verificar)
-        print(f"Força da senha: {forca_senha}")
+        elif escolha == "2":
+            #gerar senha personalizada
+            senha_personalizada1 = senha_personalizada()
+            #verificar força da senha personalizada
+            if senha_personalizada1:
+                forca_senha = verificar_forca_senha(senha_personalizada1)
+                #salvar senha personalizada no arquivo senhas.json
+                site = input("Digite o nome do site: ")
+                usuario = input("Digite o nome do usuário: ")
+                salvar_senha(site, usuario, senha_personalizada1)
+                #exibir a senha personalizada gerada e sua força
+                print(f"Senha personalizada gerada: {senha_personalizada1}")
+                print(f"Força da senha personalizada: {forca_senha}")
+                print("Senha salva com sucesso ")
 
-    elif escolha == "4":
-        consultar_senhas()
+        elif escolha == "3":
+            senha_para_verificar = input("Digite a senha para verificar sua força: ")
+            forca_senha = verificar_forca_senha(senha_para_verificar)
+            print(f"Força da senha: {forca_senha}")
 
-    elif escolha == "5":
-        site = input("digite o site: ")
-        usuario = input("digite o usuário/email: ")
-        senha = input("digite a senha: ")
-        salvar_senha(site, usuario, senha)
-        print("senha salva com sucesso")
+        elif escolha == "4":
+            consultar_senhas()
 
-    elif escolha == "6":
-        excluir_senha()
+        elif escolha == "5":
+            site = input("digite o site: ")
+            usuario = input("digite o usuário/email: ")
+            senha = input("digite a senha: ")
+            salvar_senha(site, usuario, senha)
+            print("senha salva com sucesso")
 
-    elif escolha == "7":
-        print("Saindo...")
-        break
+        elif escolha == "6":
+            excluir_senha()
 
-    else:
-        print("Opção inválida. Tente novamente.")
+        elif escolha == "7":
+            editar_senha()
+
+        elif escolha == "8":
+            print("Saindo...")
+            break
+
+        else:
+            print("Opção inválida. Tente novamente.")
+
+
+menu_interativo()
