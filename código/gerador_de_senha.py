@@ -326,6 +326,12 @@ def editar_senha():
         json.dump(dados, arquivo, indent=4, ensure_ascii=False)
 
     print("arquivo salvo com sucesso!")
+
+
+#def buscar_senha()
+
+
+#def copiar_senha()
         
 
 def menu_interativo():
