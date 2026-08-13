@@ -1,6 +1,7 @@
 #importar bibliotecas
 import secrets
 import json
+import pyperclip
 
 def menu():
     print('''
@@ -13,7 +14,8 @@ def menu():
 6 - excluir senha existente
 7 - alterar senha/usuario/site
 8 - buscar senha
-9 - sair''')
+9 - copiar senha
+10 - sair''')
 
 
 def gerar_senha():
@@ -359,8 +361,38 @@ def buscar_senha():
             return
     
 
-#def copiar_senha()
-        
+def copiar_senha():
+    try:
+        with open("senhas.json", "r") as arquivo:
+            dados = json.load(arquivo)
+    except FileNotFoundError:
+        print("Nenhuma senha salva.")
+        return
+
+    if not dados:
+        print("Não existem senhas salvas.")
+        return
+
+    for numero, senha in enumerate(dados, start=1):
+        print(f"--- senha {numero} ---")
+        print(f"site: {senha['site']}")
+        print(f"usuário: {senha['usuario']}")
+
+    try:
+        numero = int(input("Qual senha deseja copiar? "))
+    except ValueError:
+        print("Digite apenas números.")
+        return
+
+    if numero < 1 or numero > len(dados):
+        print("Número de senha inválido.")
+        return
+
+    senha_selecionada = dados[numero - 1]
+
+    pyperclip.copy(senha_selecionada["senha"])
+    print("senha copiada para a área de transferência!")
+       
 
 def menu_interativo():
     while True:
@@ -422,6 +454,9 @@ def menu_interativo():
             buscar_senha()
 
         elif escolha == "9":
+            copiar_senha()
+
+        elif escolha == "10":
             print("Saindo...")
             break
 
