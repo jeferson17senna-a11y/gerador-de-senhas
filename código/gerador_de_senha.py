@@ -12,7 +12,8 @@ def menu():
 5 - guardar senhas já criadas
 6 - excluir senha existente
 7 - alterar senha/usuario/site
-8 - sair''')
+8 - buscar senha
+9 - sair''')
 
 
 def gerar_senha():
@@ -328,8 +329,35 @@ def editar_senha():
     print("arquivo salvo com sucesso!")
 
 
-#def buscar_senha()
+def buscar_senha():
+    try:
+        with open("senhas.json", "r") as arquivo:
+            dados = json.load(arquivo)
+    except FileNotFoundError:
+        print("nenhuma senha salva.")
+        return
 
+    if not dados:
+        print("não há dados no arquivo.")
+        return
+
+    print("qual site deseja buscar?")
+    buscar_site = input("site: ").lower()
+
+    encontrou = False
+    
+    for senha in dados:
+
+        if buscar_site == senha['site'].lower():
+            encontrou = True
+            print(f"site: {senha['site']}")
+            print(f"usuário: {senha['usuario']}")
+            print(f"senha: {senha['senha']}")
+
+        if not encontrou:
+            print("nenhuma senha encontrada.")
+            return
+    
 
 #def copiar_senha()
         
@@ -391,6 +419,9 @@ def menu_interativo():
             editar_senha()
 
         elif escolha == "8":
+            buscar_senha()
+
+        elif escolha == "9":
             print("Saindo...")
             break
 
